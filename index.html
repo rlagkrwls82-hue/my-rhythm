@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>MY RHYTHM CHECK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow phone column, one question per screen; the operator view widens to a table. */
+:root {
+  --bg: #F2F4F1;
+  --surface: #FFFFFF;
+  --ink: #1D2622;
+  --muted: #5C6963;
+  --line: #D8DFDA;
+  --restore: #5F8369;
+  --restore-soft: #E3ECE4;
+  --beige: #E8DDC8;
+  --explore: #D96F24;
+  --explore-soft: #FBE7D6;
+  --navy: #1F2F4A;
+  --warn: #A5521B;
+  --font-display: "Gowun Batang", "Nanum Myeongjo", serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111613; --surface: #1A201D; --ink: #E6ECE8; --muted: #9AA7A0; --line: #2B3430;
+  --restore: #8DB396; --restore-soft: #1D2A21; --beige: #3A3327;
+  --explore: #F0954E; --explore-soft: #33231A; --navy: #A8BBE0; --warn: #F0A26A;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #1A201D; --ink: #E6ECE8; --muted: #9AA7A0; --line: #2B3430;
+  --restore: #8DB396; --restore-soft: #1D2A21; --beige: #3A3327;
+  --explore: #F0954E; --explore-soft: #33231A; --navy: #A8BBE0; --warn: #F0A26A;
+  color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px }
+.wrap { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px }
+.wrap.wide { max-width: 980px }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.35 }
+h1 { font-size: 30px } h2 { font-size: 23px } h3 { font-size: 18px }
+p { margin: 0 }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+.muted { color: var(--muted) }
+.small { font-size: 13px }
+
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px }
+.brand { font-family: var(--font-display); font-weight: 700; letter-spacing: .08em; font-size: 15px }
+.linkbtn { background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; padding: 6px 0 }
+
+.progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden }
+.progress > i { display: block; height: 100%; background: var(--ink); transition: width .3s }
+
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.pill { border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px }
+.pill.r { background: var(--restore-soft) } .pill.e { background: var(--explore-soft) }
+.pill b { font-size: 13px; letter-spacing: .1em }
+.pill.r b { color: var(--restore) } .pill.e b { color: var(--explore) }
+
+.field { display: flex; flex-direction: column; gap: 6px }
+.field label { font-size: 14px; font-weight: 600 }
+input[type=text] { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); width: 100% }
+input[type=text]:focus-visible, button:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px }
+
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 15px 18px; cursor: pointer; background: var(--ink); color: var(--bg); width: 100% }
+.btn:disabled { opacity: .35; cursor: default }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line) }
+
+.choices { display: flex; flex-direction: column; gap: 10px }
+.choice { text-align: left; font: inherit; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 16px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: border-color .15s, background .15s }
+.choice strong { font-size: 17px; font-weight: 600 }
+.choice span { font-size: 14px; color: var(--muted) }
+.choice:hover { border-color: var(--muted) }
+.choice[aria-pressed=true] { border-color: var(--ink); background: var(--bg) }
+.choice.neutral { padding: 12px 16px; border-style: dashed }
+.choice.neutral strong { font-size: 15px; font-weight: 500 }
+
+.checks { display: flex; flex-direction: column; gap: 8px }
+.check { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--ink); flex: none }
+.note { font-size: 13px; color: var(--muted); background: var(--surface); border-radius: 12px; padding: 12px 14px; border: 1px solid var(--line) }
+
+.theme { border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 10px; border: 2px solid transparent; cursor: pointer; text-align: left; font: inherit; color: var(--ink); width: 100% }
+.theme.r { background: var(--restore-soft) } .theme.e { background: var(--explore-soft) }
+.theme[aria-pressed=true].r { border-color: var(--restore) } .theme[aria-pressed=true].e { border-color: var(--explore) }
+.theme .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap }
+.theme .name { font-size: 13px; letter-spacing: .14em; font-weight: 600 }
+.theme.r .name { color: var(--restore) } .theme.e .name { color: var(--explore) }
+.badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px; background: var(--ink); color: var(--bg) }
+.theme ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted) }
+.reasons { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px }
+
+.ticket { background: var(--surface); border-radius: 20px; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; border: 1px solid var(--line) }
+.code { font-family: var(--font-display); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: .04em }
+.code.r { color: var(--restore) } .code.e { color: var(--explore) }
+.swatch { display: flex; gap: 6px; justify-content: center }
+.swatch i { width: 34px; height: 14px; border-radius: 4px; display: block }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; text-align: left; font-size: 14px; width: 100% }
+.kv dt { color: var(--muted) } .kv dd { margin: 0; font-weight: 500 }
+.flag { color: var(--warn); font-weight: 600 }
+.status { font-size: 13px; color: var(--muted); text-align: center }
+
+/* operator view */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px }
+.stat .n { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2 }
+.stat.r .n { color: var(--restore) } .stat.e .n { color: var(--explore) }
+.bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line) }
+.bar .r { background: var(--restore) } .bar .e { background: var(--explore) }
+.tablebox { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap }
+th { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em }
+td.num { font-variant-numeric: tabular-nums }
+.tag { font-weight: 600 } .tag.r { color: var(--restore) } .tag.e { color: var(--explore) }
+.row2 { display: grid; grid-template-columns: 1fr; gap: 16px }
+@media (min-width: 760px) { .row2 { grid-template-columns: 260px 1fr } }
+.qrbox { background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid var(--line) }
+.qrbox svg { width: 100%; max-width: 220px; height: auto }
+.qrbox p { color: #1D2622; font-size: 13px; text-align: center; word-break: break-all }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap }
+.toolbar .btn { width: auto; padding: 10px 14px; font-size: 14px }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const ARTIFACT_URL = "https://claude.ai/artifact/N5kqcbbgdbB2cnNYuYHfQ3";
+
+const QUESTIONS = [
+  { id: "need", tag: "현재 필요", w: 2, q: "지금 나에게 더 필요한 것은?",
+    a: ["조용한 곳에서 가만히 쉬는 시간", "눈을 감고 몸과 마음을 가라앉히고 싶어요"],
+    b: ["숲을 바라보며 천천히 걷는 시간", "바깥 공기를 마시며 기분을 환기하고 싶어요"] },
+  { id: "break", tag: "선호 시간", w: 1, q: "수업 사이 10분 휴식이 생긴다면?",
+    a: ["따뜻한 차를 들고 해먹에 눕기", "3분 호흡이나 마사지볼도 좋아요"],
+    b: ["정원을 천천히 걸으며 바람 쐬기", "눈에 띄는 꽃이나 색을 찾아봐도 좋아요"] },
+  { id: "mind", tag: "요즘 상태", w: 1, q: "요즘 머릿속과 더 가까운 것은?",
+    a: ["생각이 많아서 가만히 비워 내고 싶다", ""],
+    b: ["답답해서 탁 트인 곳에서 숨 돌리고 싶다", ""] },
+  { id: "expect", tag: "기대 경험", w: 1, q: "과정이 끝날 때 어떤 느낌이면 좋을까요?",
+    a: ["편안하고 안정된 느낌", "몸이 풀리고 숨이 깊어진 상태"],
+    b: ["상쾌하고 가벼워진 느낌", "자연 속에서 기분이 맑아진 상태"] },
+  { id: "mode", tag: "참여 방식", w: 1, q: "어떤 방식이 더 편한가요?",
+    a: ["한자리에 머물며 내 속도로", "움직임은 적게, 감각에 집중하고 싶어요"],
+    b: ["걸으면서 내 속도로", "원하면 다른 사람과 가볍게 이야기해도 좋아요"] },
+  { id: "evening", tag: "하루 마무리", w: 1, q: "저녁 시간에 더 끌리는 것은?",
+    a: ["따뜻한 차와 느린 호흡으로 고요하게", ""],
+    b: ["저녁 바람을 맞으며 산책하듯 편안하게", ""] },
+];
+
+const SAFETY = [
+  ["pain", "허리·무릎·어깨 등 통증이 있어요"],
+  ["injury", "최근 부상이나 수술을 했어요"],
+  ["dizzy", "어지럼증이나 혈압 문제가 있어요"],
+  ["pregnant", "임신 중이에요"],
+  ["allergy", "식품 알레르기가 있어요 (대체 파우치 준비)"],
+];
+
+const THEMES = {
+  R: { key: "r", name: "RESTORE", title: "고요한 회복", line: "속도를 낮추고 몸과 마음의 감각을 회복해요",
+       items: ["파우치: 무카페인 티백·곡물 간식·안대·'Ba:reum 향수", "휴식시간(자율): 다도, 차 블렌딩, 해먹 체험, 호흡 명상", "테마 수업: 족욕테라피, 싱잉볼 호흡 명상, Body Scan"],
+       pouch: "세이지그린 + 베이지", colors: ["var(--restore)", "var(--beige)"] },
+  E: { key: "e", name: "EXPLORE", title: "즐거운 환기", line: "만들고, 풀고, 걸으며 기분을 맑게 환기해요",
+       items: ["파우치: 과일·곡물바·상쾌한 차·마사지볼·'E:um 향수", "휴식시간(자율): 미산가 팔찌, 양말목 티코스터, 메타세쿼이아 사진, 사운드 테라피", "테마 수업: 비누 만들기, 소도구 릴리즈, 컬러테라피"],
+       pouch: "오렌지 + 네이비", colors: ["var(--explore)", "var(--navy)"] },
+};
+
+const LS_KEY = "myrhythm.check.v1";
+const S = { step: "intro", qi: 0, name: "", answers: {}, safety: [], rec: null, choice: null, changed: 0, saved: null, createdAt: null };
+let db = null, uid = null, isAdmin = false, adminRows = [], adminUnsub = null, view = "check";
+
+const app = document.getElementById("app");
+const h = (tag, attrs = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  return el;
+};
+
+function score() {
+  let s = 0;
+  for (const q of QUESTIONS) s += (S.answers[q.id] || 0) * q.w;
+  return s < 0 ? "R" : s > 0 ? "E" : "T";
+}
+function reasons(theme) {
+  const want = theme === "R" ? -1 : 1;
+  return QUESTIONS.filter(q => S.answers[q.id] === want).map(q => (want < 0 ? q.a : q.b)[0]).slice(0, 3);
+}
+const pouchType = () => S.safety.includes("allergy") ? "대체형" : "일반형";
+const intensityFlag = () => S.safety.some(k => k !== "allergy");
+const codeOf = (c = S.choice) => c + (pouchType() === "대체형" ? "2" : "1");
+
+function persistLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+}
+async function save() {
+  persistLocal();
+  if (!db || !uid) { S.saved = "local"; return; }
+  const now = new Date().toISOString();
+  const body = {
+    name: S.name, answers: S.answers, rec: S.rec, choice: S.choice,
+    pouch: pouchType(), safety: S.safety, intensity: intensityFlag(), changed: S.changed,
+    code: codeOf(), createdAt: S.createdAt || now, updatedAt: now,
+  };
+  try { await db.doc("responses/" + uid).set(body); S.saved = "server"; S.restarted = false; }
+  catch (e) { S.saved = "local"; }
+  persistLocal();
+}
+
+function header(extra) {
+  return h("div", { class: "top" },
+    S.step !== "intro" && S.step !== "done" && view === "check"
+      ? h("button", { class: "linkbtn brand", style: "text-decoration:none;color:var(--ink)", title: "처음으로", onclick: () => go("intro") }, "MY RHYTHM")
+      : h("span", { class: "brand" }, "MY RHYTHM"),
+    extra || (isAdmin ? h("button", { class: "linkbtn", onclick: () => { view = view === "admin" ? "check" : "admin"; render(); } }, view === "admin" ? "진단 화면" : "운영진 보기") : h("span")));
+}
+function progress(n) {
+  const total = QUESTIONS.length + 2;
+  return h("div", { class: "progress", role: "progressbar", "aria-valuemin": 0, "aria-valuemax": total, "aria-valuenow": n }, h("i", { style: `width:${(n / total) * 100}%` }));
+}
+
+function renderIntro() {
+  return [
+    header(),
+    h("div", { class: "eyebrow" }, "MY RHYTHM CHECK · 3분"),
+    h("h1", {}, "오늘 나에게 맞는 회복의 리듬을 찾아볼까요?"),
+    h("p", { class: "muted" }, "7개 질문에 답하면 두 테마 중 하나를 추천해 드려요. 추천을 보고 최종 선택은 직접 합니다. 정답도 점수도 없어요."),
+    h("div", { class: "duo" },
+      h("div", { class: "pill r" }, h("b", {}, "RESTORE"), h("span", {}, "고요한 회복")),
+      h("div", { class: "pill e" }, h("b", {}, "EXPLORE"), h("span", {}, "즐거운 환기"))),
+    h("p", { class: "small muted" }, "두 테마는 체력 수준과 상관없어요. 오늘 필요한 회복 방식을 고르는 거예요."),
+    h("button", { class: "btn", onclick: () => go("info") }, "시작하기"),
+  ];
+}
+
+function renderInfo() {
+  const name = h("input", { type: "text", id: "f-name", autocomplete: "name", value: S.name, placeholder: "홍길동" });
+  const next = h("button", { class: "btn", disabled: !S.name.trim(), onclick: () => { S.name = name.value.trim(); go("q", 0); } }, "다음");
+  name.addEventListener("input", () => { next.disabled = !name.value.trim(); });
+  return [
+    header(), progress(0),
+    h("h2", {}, "이름을 알려 주세요"),
+    h("div", { class: "field" }, h("label", { for: "f-name" }, "이름"), name),
+    next,
+    h("button", { class: "linkbtn", onclick: () => go("intro") }, "이전"),
+  ];
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[S.qi];
+  const pick = v => { S.answers[q.id] = v; persistLocal(); setTimeout(() => S.qi < QUESTIONS.length - 1 ? go("q", S.qi + 1) : go("safety"), 160); render(); };
+  const opt = (v, [t, d], cls = "") => h("button", { class: "choice " + cls, "aria-pressed": S.answers[q.id] === v ? "true" : "false", onclick: () => pick(v) },
+    h("strong", {}, t), d ? h("span", {}, d) : null);
+  return [
+    header(), progress(S.qi + 1),
+    h("div", { class: "eyebrow" }, `${S.qi + 1} / ${QUESTIONS.length + 1} · ${q.tag}`),
+    h("h2", {}, q.q),
+    h("div", { class: "choices" }, opt(-1, q.a), opt(1, q.b), opt(0, ["둘 다 비슷해요", ""], "neutral")),
+    h("button", { class: "linkbtn", onclick: () => S.qi > 0 ? go("q", S.qi - 1) : go("info") }, "이전"),
+  ];
+}
+
+function renderSafety() {
+  const none = h("input", { type: "checkbox", id: "s-none", checked: S.safety.length === 0 && S.safetyDone ? true : false });
+  const boxes = SAFETY.map(([k, label]) => {
+    const cb = h("input", { type: "checkbox", id: "s-" + k, checked: S.safety.includes(k) });
+    cb.addEventListener("change", () => { if (cb.checked) none.checked = false; sync(); });
+    return h("label", { class: "check", for: "s-" + k }, cb, h("span", {}, label));
+  });
+  const next = h("button", { class: "btn", onclick: () => { S.safetyDone = true; S.rec = score(); S.choice = S.rec === "T" ? null : S.rec; go("result"); } }, "추천 결과 보기");
+  function sync() {
+    S.safety = SAFETY.map(([k]) => k).filter(k => document.getElementById("s-" + k).checked);
+    next.disabled = !(S.safety.length || none.checked);
+  }
+  none.addEventListener("change", () => { if (none.checked) SAFETY.forEach(([k]) => document.getElementById("s-" + k).checked = false); sync(); });
+  setTimeout(sync);
+  return [
+    header(), progress(QUESTIONS.length + 1),
+    h("div", { class: "eyebrow" }, `${QUESTIONS.length + 1} / ${QUESTIONS.length + 1} · 안전 확인`),
+    h("h2", {}, "활동 강도를 조절해야 할 부분이 있나요?"),
+    h("div", { class: "note" }, "이 문항은 테마 추천에 쓰지 않아요. 진행자가 동작 강도를 조절하고 대체 파우치를 준비하는 데만 씁니다."),
+    h("div", { class: "checks" }, ...boxes, h("label", { class: "check", for: "s-none" }, none, h("span", {}, "해당 없음"))),
+    next,
+    h("button", { class: "linkbtn", onclick: () => go("q", QUESTIONS.length - 1) }, "이전"),
+  ];
+}
+
+function themeCard(t, recommended) {
+  const T = THEMES[t];
+  return h("button", { class: "theme " + T.key, "aria-pressed": S.choice === t ? "true" : "false", onclick: () => { S.choice = t; render(); } },
+    h("div", { class: "head" }, h("span", { class: "name" }, T.name), recommended ? h("span", { class: "badge" }, "추천") : null),
+    h("h3", {}, T.title),
+    h("p", { class: "small" }, T.line),
+    h("ul", {}, T.items.map(i => h("li", {}, i))));
+}
+
+function renderResult() {
+  const rec = S.rec;
+  const order = rec === "E" ? ["E", "R"] : ["R", "E"];
+  const why = rec === "T" ? [] : reasons(rec);
+  return [
+    header(),
+    h("div", { class: "eyebrow" }, "추천 결과"),
+    rec === "T"
+      ? h("h2", {}, "두 테마가 모두 잘 맞아요. 오늘 더 끌리는 쪽을 골라 주세요.")
+      : h("h2", {}, `오늘은 ${THEMES[rec].name}, ${THEMES[rec].title}을 추천해요`),
+    why.length ? h("div", { class: "note" }, h("p", {}, "이렇게 답하셨어요"), h("ul", { class: "reasons" }, why.map(w => h("li", {}, w)))) : null,
+    h("div", { class: "choices" }, order.map(t => themeCard(t, t === rec))),
+    h("p", { class: "small muted" }, "추천과 다른 테마를 골라도 괜찮아요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요."),
+    h("button", { class: "btn", disabled: !S.choice, onclick: async () => { S.createdAt = S.createdAt || new Date().toISOString(); go("done"); await save(); render(); } },
+      S.choice ? `${THEMES[S.choice].name}로 확정하기` : "테마를 선택해 주세요"),
+    h("button", { class: "linkbtn", onclick: () => go("safety") }, "이전"),
+  ];
+}
+
+function renderDone() {
+  const T = THEMES[S.choice];
+  const other = S.choice === "R" ? "E" : "R";
+  return [
+    header(),
+    h("div", { class: "ticket" },
+      h("div", { class: "eyebrow" }, "파우치 수령 코드"),
+      h("div", { class: "code " + T.key }, codeOf()),
+      h("div", { class: "swatch", "aria-hidden": "true" }, T.colors.map(c => h("i", { style: `background:${c}` }))),
+      h("h2", {}, `${T.name} · ${T.title}`),
+      h("dl", { class: "kv" },
+        h("dt", {}, "이름"), h("dd", {}, S.name),
+        h("dt", {}, "파우치"), h("dd", {}, `${T.pouch} · ${pouchType()}`),
+        intensityFlag() ? h("dt", {}, "강도") : null,
+        intensityFlag() ? h("dd", { class: "flag" }, "진행자 강도 조절 확인") : null),
+      h("p", { class: "small muted" }, "파우치를 받을 때 이 화면을 보여 주세요.")),
+    h("p", { class: "status" }, S.saved === "server" ? "응답이 운영진에게 전달됐어요." : S.saved === "local" ? "진단을 마쳤어요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요." : "저장 중…"),
+    S.changed ? h("p", { class: "small muted", style: "text-align:center" }, "테마 변경을 이미 한 번 사용했어요.")
+      : h("button", { class: "btn ghost", onclick: async () => { S.choice = other; S.changed = 1; S.saved = null; render(); await save(); render(); } },
+          `${THEMES[other].name}로 바꾸기 (1회)`),
+    isAdmin ? h("button", { class: "linkbtn", style: "align-self:center", onclick: restart }, "처음부터 다시 하기 (운영진 테스트용)") : null,
+  ];
+}
+
+function restart() {
+  Object.assign(S, { step: "intro", qi: 0, answers: {}, safety: [], safetyDone: false, rec: null, choice: null, changed: 0, saved: null, createdAt: null, restarted: true });
+  persistLocal(); render(); window.scrollTo(0, 0);
+}
+function go(step, qi) { S.step = step; if (qi != null) S.qi = qi; persistLocal(); render(); window.scrollTo(0, 0); }
+
+/* ---------- operator view ---------- */
+function startAdmin() {
+  if (adminUnsub || !db) return;
+  adminUnsub = db.collection("responses").orderBy("updatedAt", "desc").onSnapshot(snap => {
+    adminRows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (view === "admin") render();
+  }, () => { adminUnsub = null; });
+}
+function csv() {
+  const head = ["이름", "추천", "선택", "코드", "파우치", "강도조절", "안전응답", "변경", ...QUESTIONS.map(q => q.tag), "응답시각"];
+  const val = v => v === -1 ? "R" : v === 1 ? "E" : v === 0 ? "-" : "";
+  const lines = adminRows.map(r => [r.name, r.rec, r.choice, r.code, r.pouch, r.intensity ? "Y" : "", (r.safety || []).join("|"), r.changed ? "Y" : "",
+    ...QUESTIONS.map(q => val((r.answers || {})[q.id])), r.updatedAt].map(x => `"${String(x ?? "").replace(/"/g, '""')}"`).join(","));
+  return [head.join(","), ...lines].join("\n");
+}
+function renderAdmin() {
+  startAdmin();
+  const rs = adminRows, n = rs.length;
+  const cR = rs.filter(r => r.choice === "R").length, cE = rs.filter(r => r.choice === "E").length;
+  const alt = rs.filter(r => r.pouch === "대체형").length, inten = rs.filter(r => r.intensity).length;
+  const changed = rs.filter(r => r.changed).length, followed = rs.filter(r => r.rec === r.choice).length;
+  const pct = x => n ? Math.round((x / n) * 100) + "%" : "–";
+  const stat = (label, value, sub, cls = "") => h("div", { class: "stat " + cls }, h("div", { class: "small muted" }, label), h("div", { class: "n" }, value), sub ? h("div", { class: "small muted" }, sub) : null);
+  const safeLabel = k => (SAFETY.find(s => s[0] === k) || [k, k])[1].replace(/ \(.*\)/, "");
+
+  let qr = null;
+  if (ARTIFACT_URL && window.qrcode) {
+    const q = qrcode(0, "M"); q.addData(ARTIFACT_URL); q.make();
+    const box = h("div", { class: "qrbox" }); box.innerHTML = q.createSvgTag(6, 2);
+    box.append(h("p", {}, "MY RHYTHM CHECK"), h("p", {}, ARTIFACT_URL));
+    qr = box;
+  }
+  const copyBtn = h("button", { class: "btn ghost", onclick: async () => {
+    try { await navigator.clipboard.writeText(csv()); copyBtn.textContent = "복사했어요"; }
+    catch (e) { copyBtn.textContent = "복사할 수 없어요"; }
+    setTimeout(() => copyBtn.textContent = "CSV 복사", 1800);
+  } }, "CSV 복사");
+
+  return [
+    header(),
+    h("div", { class: "eyebrow" }, "운영진 보기 · 실시간"),
+    h("h2", {}, `응답 ${n}명`),
+    h("div", { class: "bar", "aria-label": `RESTORE ${cR}명, EXPLORE ${cE}명` },
+      h("div", { class: "r", style: `width:${n ? (cR / n) * 100 : 0}%` }), h("div", { class: "e", style: `width:${n ? (cE / n) * 100 : 0}%` })),
+    h("div", { class: "stats" },
+      stat("RESTORE", cR, pct(cR), "r"), stat("EXPLORE", cE, pct(cE), "e"),
+      stat("대체형 파우치", alt, "알레르기 응답"), stat("강도 조절 확인", inten, "진행자 공유"),
+      stat("추천대로 선택", pct(followed), `${followed}명`), stat("테마 변경", changed, "1회 변경 사용")),
+    h("div", { class: "row2" },
+      h("div", { style: "display:flex;flex-direction:column;gap:10px" },
+        qr || h("div", { class: "note" }, "QR 이미지는 게시 주소가 정해진 뒤 여기에 표시돼요."),
+        h("p", { class: "small muted" }, "R1·E1은 일반형, R2·E2는 대체형 파우치예요.")),
+      h("div", { style: "display:flex;flex-direction:column;gap:10px;min-width:0" },
+        h("div", { class: "toolbar" }, copyBtn),
+        h("div", { class: "tablebox" }, h("table", {},
+          h("thead", {}, h("tr", {}, ["이름", "코드", "추천", "선택", "강도 조절", "변경", "응답시각"].map(t => h("th", {}, t)))),
+          h("tbody", {}, n ? rs.map(r => h("tr", {},
+            h("td", {}, r.name || "–"),
+            h("td", {}, h("span", { class: "tag " + (r.choice === "R" ? "r" : "e") }, r.code || "")),
+            h("td", {}, r.rec === "T" ? "동점" : r.rec || ""), h("td", {}, r.choice || ""),
+            h("td", { class: r.intensity ? "flag" : "" }, (r.safety || []).filter(k => k !== "allergy").map(safeLabel).join(", ")),
+            h("td", {}, r.changed ? "변경" : ""),
+            h("td", { class: "num" }, r.updatedAt ? new Date(r.updatedAt).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "")))
+            : h("tr", {}, h("td", { colspan: 7, class: "muted" }, "아직 응답이 없어요. 교육생이 QR로 진단을 마치면 여기에 바로 나타나요."))))))),
+  ];
+}
+
+function render() {
+  app.className = "wrap" + (view === "admin" ? " wide" : "");
+  const parts = view === "admin" ? renderAdmin()
+    : S.step === "info" ? renderInfo()
+    : S.step === "q" ? renderQuestion()
+    : S.step === "safety" ? renderSafety()
+    : S.step === "result" ? renderResult()
+    : S.step === "done" ? renderDone()
+    : renderIntro();
+  app.replaceChildren(...parts.filter(Boolean));
+}
+
+try { const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null"); if (saved) Object.assign(S, saved); } catch (e) {}
+render();
+
+(async () => {
+  if (!window.claude?.use) return;
+  const [dbNs, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+  db = dbNs;
+  if (user) { uid = await user.id(); isAdmin = await user.canEdit(); }
+  if (db && uid && S.step !== "done" && !S.restarted) {
+    try {
+      const snap = await db.doc("responses/" + uid).get();
+      if (snap.exists) {
+        const d = snap.data();
+        Object.assign(S, { step: "done", name: d.name, answers: d.answers || {}, safety: d.safety || [], rec: d.rec, choice: d.choice, changed: d.changed || 0, createdAt: d.createdAt, saved: "server" });
+      }
+    } catch (e) {}
+  }
+  if (S.step === "done" && S.saved === "local" && db && uid) await save();
+  render();
+})();
+</script>
+
+</body>
+</html>
