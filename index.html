@@ -64,8 +64,8 @@ p { margin: 0 }
 
 .field { display: flex; flex-direction: column; gap: 6px }
 .field label { font-size: 14px; font-weight: 600 }
-input[type=text] { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); width: 100% }
-input[type=text]:focus-visible, button:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px }
+input[type=text], input[type=password] { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); width: 100% }
+input[type=text]:focus-visible, input[type=password]:focus-visible, button:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px }
 
 .btn { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 15px 18px; cursor: pointer; background: var(--ink); color: var(--bg); width: 100% }
 .btn:disabled { opacity: .35; cursor: default }
@@ -173,7 +173,17 @@ const THEMES = {
        pouch: "오렌지 + 네이비", colors: ["var(--explore)", "var(--navy)"] },
 };
 
+// 결과 수집용 Microsoft Forms (미리 채운 링크의 질문 ID, 양식 질문 순서와 같음)
+const FORM_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Gmku4jvH0E23uCDVNygRrthH5gnYT-dDpG2WrLH_7thUNkY3TkZMUllIMExTSkNJQkw3WENZNFRFVy4u";
+const FORM_Q = {
+  name: "f6665b3c77394fe98ebe5b32a6b41c5a", rec: "ae2fe86822e64b349bb455a46f846961", choice: "3397b02716cb4693a967c01212a40830",
+  code: "dbba7c9a5bb340188f8fceeb2de41a39", changed: "31ded67942534d32acc6fc4e098f1bb8", intensity: "0a3c8d455e7a4fbca756933ca8c419b4",
+  safety: "86b27799c20743368489169e288445f7",
+  answers: ["b332681b358b4d55bb33fa9124a831f5", "d0f32eb6267f45f8bfdf4e029d62d11e", "c422484a91be4db29b1293c181ee8f15",
+            "db9765c289804d459c050674af5fed7c", "8f5a0837ef5b423ba18abb5564a73350", "a9c07242004f47b59b5494968517c78d"],
+};
 const LS_KEY = "myrhythm.check.v1";
+const KEEP_MS = 60 * 60 * 1000; // 기록 보관 1시간, 이후 다시 진단
 const S = { step: "intro", qi: 0, name: "", answers: {}, safety: [], rec: null, choice: null, changed: 0, saved: null, createdAt: null };
 let db = null, uid = null, isAdmin = false, adminRows = [], adminUnsub = null, view = "check";
 
@@ -203,7 +213,21 @@ const intensityFlag = () => S.safety.some(k => k !== "allergy");
 const codeOf = (c = S.choice) => c + (pouchType() === "대체형" ? "2" : "1");
 
 function persistLocal() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ ...S, savedAt: Date.now() })); } catch (e) {}
+}
+const THEME_LABEL = { R: "RESTORE", E: "EXPLORE", T: "동점" };
+const ANSWER_LABEL = { "-1": "RESTORE", "0": "둘 다", "1": "EXPLORE" };
+function formLink() {
+  const text = v => encodeURIComponent(v);
+  const pick = v => encodeURIComponent(JSON.stringify(v)); // 선택 문항은 따옴표로 감싼 값
+  const safety = S.safety.map(k => (SAFETY.find(x => x[0] === k) || [k, k])[1].replace(/ \(.*\)/, "")).join(", ");
+  const params = [
+    [FORM_Q.name, text(S.name)], [FORM_Q.rec, pick(THEME_LABEL[S.rec])], [FORM_Q.choice, pick(THEME_LABEL[S.choice])],
+    [FORM_Q.code, pick(codeOf())], [FORM_Q.changed, pick(S.changed ? "예" : "아니오")],
+    [FORM_Q.intensity, pick(intensityFlag() ? "예" : "아니오")], [FORM_Q.safety, text(safety || "없음")],
+    ...QUESTIONS.map((q, i) => [FORM_Q.answers[i], pick(ANSWER_LABEL[String(S.answers[q.id] ?? 0)])]),
+  ];
+  return FORM_URL + params.map(([id, v]) => `&r${id}=${v}`).join("");
 }
 async function save() {
   persistLocal();
@@ -341,16 +365,39 @@ function renderDone() {
         intensityFlag() ? h("dt", {}, "강도") : null,
         intensityFlag() ? h("dd", { class: "flag" }, "진행자 강도 조절 확인") : null),
       h("p", { class: "small muted" }, "파우치를 받을 때 이 화면을 보여 주세요.")),
-    h("p", { class: "status" }, S.saved === "server" ? "응답이 운영진에게 전달됐어요." : S.saved === "local" ? "진단을 마쳤어요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요." : "저장 중…"),
+    S.submitted === S.choice
+      ? h("p", { class: "status" }, "결과를 제출했어요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요.")
+      : h("a", { class: "btn", style: "text-align:center;text-decoration:none", href: formLink(), target: "_blank", rel: "noopener",
+          onclick: () => { S.submitted = S.choice; persistLocal(); setTimeout(render, 300); } },
+          S.changed ? "바뀐 결과 다시 제출하기" : "결과 제출하기"),
+    S.submitted === S.choice ? null : h("p", { class: "small muted", style: "text-align:center" }, "열리는 화면에서 [제출]을 꼭 눌러 주세요."),
     S.changed ? h("p", { class: "small muted", style: "text-align:center" }, "테마 변경을 이미 한 번 사용했어요.")
       : h("button", { class: "btn ghost", onclick: async () => { S.choice = other; S.changed = 1; S.saved = null; render(); await save(); render(); } },
           `${THEMES[other].name}로 바꾸기 (1회)`),
-    isAdmin ? h("button", { class: "linkbtn", style: "align-self:center", onclick: restart }, "처음부터 다시 하기 (운영진 테스트용)") : null,
+    resetBox(),
   ];
 }
 
+// 운영진 초기화: 비밀번호를 넣으면 이 기기의 기록을 바로 지움 (기본은 1시간 뒤 자동 초기화)
+const RESET_PW = "1234";
+let resetOpen = false;
+function resetBox() {
+  if (!resetOpen) return h("button", { class: "linkbtn", style: "align-self:center", onclick: () => { resetOpen = true; render(); document.getElementById("f-pw")?.focus(); } }, "운영진 초기화");
+  const pw = h("input", { type: "password", id: "f-pw", inputmode: "numeric", autocomplete: "off", placeholder: "비밀번호", "aria-label": "운영진 비밀번호" });
+  const msg = h("p", { class: "small muted", style: "text-align:center;min-height:1.4em", "aria-live": "polite" });
+  const tryReset = () => {
+    if (pw.value === RESET_PW) { resetOpen = false; restart(); }
+    else { msg.textContent = "비밀번호가 맞지 않아요."; pw.value = ""; pw.focus(); }
+  };
+  pw.addEventListener("keydown", e => { if (e.key === "Enter") tryReset(); });
+  return h("div", { style: "display:flex;flex-direction:column;gap:8px" },
+    h("div", { style: "display:flex;gap:8px" }, pw, h("button", { class: "btn", style: "width:auto;flex:none;padding:0 18px", onclick: tryReset }, "초기화")),
+    msg,
+    h("button", { class: "linkbtn", style: "align-self:center", onclick: () => { resetOpen = false; render(); } }, "닫기"));
+}
+
 function restart() {
-  Object.assign(S, { step: "intro", qi: 0, answers: {}, safety: [], safetyDone: false, rec: null, choice: null, changed: 0, saved: null, createdAt: null, restarted: true });
+  Object.assign(S, { step: "intro", name: "", submitted: null, qi: 0, answers: {}, safety: [], safetyDone: false, rec: null, choice: null, changed: 0, saved: null, createdAt: null, restarted: true });
   persistLocal(); render(); window.scrollTo(0, 0);
 }
 function go(step, qi) { S.step = step; if (qi != null) S.qi = qi; persistLocal(); render(); window.scrollTo(0, 0); }
@@ -434,7 +481,11 @@ function render() {
   app.replaceChildren(...parts.filter(Boolean));
 }
 
-try { const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null"); if (saved) Object.assign(S, saved); } catch (e) {}
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.savedAt && Date.now() - saved.savedAt < KEEP_MS) { delete saved.savedAt; Object.assign(S, saved); }
+  else localStorage.removeItem(LS_KEY);
+} catch (e) {}
 render();
 
 (async () => {
