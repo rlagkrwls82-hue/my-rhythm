@@ -137,23 +137,23 @@ const ARTIFACT_URL = "https://claude.ai/artifact/N5kqcbbgdbB2cnNYuYHfQ3";
 
 const QUESTIONS = [
   { id: "need", tag: "현재 필요", w: 2, q: "지금 나에게 더 필요한 것은?",
-    a: ["조용한 곳에서 가만히 쉬는 시간", "눈을 감고 몸과 마음을 가라앉히고 싶어요"],
-    b: ["숲을 바라보며 천천히 걷는 시간", "바깥 공기를 마시며 기분을 환기하고 싶어요"] },
-  { id: "break", tag: "선호 시간", w: 1, q: "수업 사이 10분 휴식이 생긴다면?",
-    a: ["따뜻한 차를 들고 해먹에 눕기", "3분 호흡이나 마사지볼도 좋아요"],
-    b: ["정원을 천천히 걸으며 바람 쐬기", "눈에 띄는 꽃이나 색을 찾아봐도 좋아요"] },
+    a: ["따뜻한 곳에서 가만히 쉬는 시간", "몸과 마음을 천천히 가라앉히고 싶어요"],
+    b: ["새로운 감각으로 기분을 바꾸는 시간", "평소와 다른 경험을 탐험해 보고 싶어요"] },
+  { id: "break", tag: "선호 시간", w: 1, q: "수업 사이 쉬는 시간이 생긴다면?",
+    a: ["따뜻한 차를 들고 해먹에 기대 쉬기", "호흡에 집중하며 명상을 해 보고 싶어요"],
+    b: ["손으로 팔찌나 티코스터 만들기", "몸을 풀거나 숲길을 걸어도 좋아요"] },
   { id: "mind", tag: "요즘 상태", w: 1, q: "요즘 머릿속과 더 가까운 것은?",
     a: ["생각이 많아서 가만히 비워 내고 싶다", ""],
-    b: ["답답해서 탁 트인 곳에서 숨 돌리고 싶다", ""] },
+    b: ["답답해서 새로운 자극으로 풀어내고 싶다", ""] },
   { id: "expect", tag: "기대 경험", w: 1, q: "과정이 끝날 때 어떤 느낌이면 좋을까요?",
-    a: ["편안하고 안정된 느낌", "몸이 풀리고 숨이 깊어진 상태"],
-    b: ["상쾌하고 가벼워진 느낌", "자연 속에서 기분이 맑아진 상태"] },
+    a: ["편안하고 안정된 느낌", "몸이 따뜻해지고 숨이 깊어진 상태"],
+    b: ["가볍고 개운한 느낌", "새로운 감각을 깨우고 맑아진 상태"] },
   { id: "mode", tag: "참여 방식", w: 1, q: "어떤 방식이 더 편한가요?",
-    a: ["한자리에 머물며 내 속도로", "움직임은 적게, 감각에 집중하고 싶어요"],
-    b: ["걸으면서 내 속도로", "원하면 다른 사람과 가볍게 이야기해도 좋아요"] },
+    a: ["한자리에 머물며 조용히", "움직임은 적게, 쉬는 데 집중하고 싶어요"],
+    b: ["몸을 움직이거나 손으로 표현하며", "그리고 만들고 느끼는 활동이 좋아요"] },
   { id: "evening", tag: "하루 마무리", w: 1, q: "저녁 시간에 더 끌리는 것은?",
-    a: ["따뜻한 차와 느린 호흡으로 고요하게", ""],
-    b: ["저녁 바람을 맞으며 산책하듯 편안하게", ""] },
+    a: ["따뜻한 족욕이나 소리 명상으로 고요하게", ""],
+    b: ["감각을 깨우거나 그림으로 마음을 표현하며", ""] },
 ];
 
 const SAFETY = [
@@ -161,15 +161,15 @@ const SAFETY = [
   ["injury", "최근 부상이나 수술을 했어요"],
   ["dizzy", "어지럼증이나 혈압 문제가 있어요"],
   ["pregnant", "임신 중이에요"],
-  ["allergy", "식품 알레르기가 있어요 (대체 파우치 준비)"],
+  ["allergy", "식품 알레르기가 있어요 (간식 준비 참고)"],
 ];
 
 const THEMES = {
   R: { key: "r", name: "RESTORE", title: "고요한 회복", line: "속도를 낮추고 몸과 마음의 감각을 회복해요",
-       items: ["파우치: 무카페인 티백·곡물 간식·안대·'Ba:reum 향수", "휴식시간(자율): 다도, 차 블렌딩, 해먹 체험, 호흡 명상", "테마 수업: 족욕테라피, 싱잉볼 호흡 명상, Body Scan"],
+       items: ["선택 강의: 족욕테라피, 싱잉볼 명상", "마이 픽 타임(자율): 다도 체험, 차 블렌딩, 실내 해먹, 필사, 걷기 명상"],
        pouch: "세이지그린 + 베이지", colors: ["var(--restore)", "var(--beige)"] },
-  E: { key: "e", name: "EXPLORE", title: "즐거운 환기", line: "만들고, 풀고, 걸으며 기분을 맑게 환기해요",
-       items: ["파우치: 과일·곡물바·상쾌한 차·마사지볼·'E:um 향수", "휴식시간(자율): 미산가 팔찌, 양말목 티코스터, 메타세쿼이아 사진, 사운드 테라피", "테마 수업: 비누 만들기, 소도구 릴리즈, 컬러테라피"],
+  E: { key: "e", name: "EXPLORE", title: "감각 탐험", line: "평소와 다른 감각을 깨우고, 마음의 색을 찾아가는 탐험이에요",
+       items: ["선택 강의: Blind Flow, 백드롭 페인팅", "마이 픽 타임(자율): 미산가 팔찌, 양말목 티코스터, 소도구 릴리즈, 메타세쿼이아 산책·사진"],
        pouch: "오렌지 + 네이비", colors: ["var(--explore)", "var(--navy)"] },
 };
 
@@ -192,10 +192,17 @@ const h = (tag, attrs = {}, ...kids) => {
   return el;
 };
 
+// 점수 범위 -7(RESTORE) ~ +7(EXPLORE). 차이가 1 이하면 애매한 응답으로 보고 두 테마에 반반 배정
+const BALANCE_BAND = 1;
 function score() {
   let s = 0;
   for (const q of QUESTIONS) s += (S.answers[q.id] || 0) * q.w;
-  return s < 0 ? "R" : s > 0 ? "E" : "T";
+  return s;
+}
+function recommend() {
+  const s = score();
+  S.balanced = Math.abs(s) <= BALANCE_BAND;
+  return S.balanced ? (Math.random() < 0.5 ? "R" : "E") : s < 0 ? "R" : "E";
 }
 function reasons(theme) {
   const want = theme === "R" ? -1 : 1;
@@ -210,10 +217,13 @@ function persistLocal() {
 }
 const THEME_LABEL = { R: "RESTORE", E: "EXPLORE", T: "동점" };
 const ANSWER_LABEL = { "-1": "RESTORE", "0": "둘 다", "1": "EXPLORE" };
+// 주소 끝에 ?test 를 붙이면 점검용으로 열려 엑셀에 저장하지 않음
+const TEST_MODE = new URLSearchParams(location.search).has("test");
 async function sendResult() {
+  if (TEST_MODE) { S.saved = "test"; return; }
   const safety = S.safety.map(k => (SAFETY.find(x => x[0] === k) || [k, k])[1].replace(/ \(.*\)/, "")).join(", ");
   const body = {
-    name: S.name, rec: THEME_LABEL[S.rec], choice: THEME_LABEL[S.choice], changed: S.changed ? "예" : "아니오",
+    name: S.name, rec: S.balanced ? "동점" : THEME_LABEL[S.rec], choice: THEME_LABEL[S.choice], changed: S.changed ? "예" : "아니오",
     code: codeOf(), pouch: pouchType(), intensity: intensityFlag() ? "예" : "아니오", safety: safety || "없음",
   };
   QUESTIONS.forEach((q, i) => { body["a" + (i + 1)] = ANSWER_LABEL[String(S.answers[q.id] ?? 0)]; });
@@ -257,10 +267,10 @@ function renderIntro() {
     header(),
     h("div", { class: "eyebrow" }, "MY RHYTHM CHECK · 3분"),
     h("h1", {}, "오늘 나에게 맞는 회복의 리듬을 찾아볼까요?"),
-    h("p", { class: "muted" }, "7개 질문에 답하면 두 테마 중 하나를 추천해 드려요. 추천을 보고 최종 선택은 직접 합니다. 정답도 점수도 없어요."),
+    h("p", { class: "muted" }, "7개 질문에 답하면 오늘 나에게 맞는 테마를 찾아 드려요. 정답도 점수도 없어요."),
     h("div", { class: "duo" },
       h("div", { class: "pill r" }, h("b", {}, "RESTORE"), h("span", {}, "고요한 회복")),
-      h("div", { class: "pill e" }, h("b", {}, "EXPLORE"), h("span", {}, "즐거운 환기"))),
+      h("div", { class: "pill e" }, h("b", {}, "EXPLORE"), h("span", {}, "감각 탐험"))),
     h("p", { class: "small muted" }, "두 테마는 체력 수준과 상관없어요. 오늘 필요한 회복 방식을 고르는 거예요."),
     h("button", { class: "btn", onclick: () => go("info") }, "시작하기"),
   ];
@@ -300,7 +310,7 @@ function renderSafety() {
     cb.addEventListener("change", () => { if (cb.checked) none.checked = false; sync(); });
     return h("label", { class: "check", for: "s-" + k }, cb, h("span", {}, label));
   });
-  const next = h("button", { class: "btn", onclick: () => { S.safetyDone = true; S.rec = score(); S.choice = S.rec === "T" ? null : S.rec; go("result"); } }, "추천 결과 보기");
+  const next = h("button", { class: "btn", onclick: async () => { S.safetyDone = true; S.rec = recommend(); S.choice = S.rec; S.createdAt = S.createdAt || new Date().toISOString(); go("done"); await save(); render(); } }, "나의 테마 확인하기");
   function sync() {
     S.safety = SAFETY.map(([k]) => k).filter(k => document.getElementById("s-" + k).checked);
     next.disabled = !(S.safety.length || none.checked);
@@ -311,7 +321,7 @@ function renderSafety() {
     header(), progress(QUESTIONS.length + 1),
     h("div", { class: "eyebrow" }, `${QUESTIONS.length + 1} / ${QUESTIONS.length + 1} · 안전 확인`),
     h("h2", {}, "활동 강도를 조절해야 할 부분이 있나요?"),
-    h("div", { class: "note" }, "이 문항은 테마 추천에 쓰지 않아요. 진행자가 동작 강도를 조절하고 대체 파우치를 준비하는 데만 씁니다."),
+    h("div", { class: "note" }, "이 문항은 테마 추천에 쓰지 않아요. 진행자가 동작 강도를 조절하고 간식을 준비하는 데만 씁니다."),
     h("div", { class: "checks" }, ...boxes, h("label", { class: "check", for: "s-none" }, none, h("span", {}, "해당 없음"))),
     next,
     h("button", { class: "linkbtn", onclick: () => go("q", QUESTIONS.length - 1) }, "이전"),
@@ -330,16 +340,16 @@ function themeCard(t, recommended) {
 function renderResult() {
   const rec = S.rec;
   const order = rec === "E" ? ["E", "R"] : ["R", "E"];
-  const why = rec === "T" ? [] : reasons(rec);
+  const why = S.balanced ? [] : reasons(rec);
   return [
     header(),
     h("div", { class: "eyebrow" }, "추천 결과"),
-    rec === "T"
-      ? h("h2", {}, "두 테마가 모두 잘 맞아요. 오늘 더 끌리는 쪽을 골라 주세요.")
-      : h("h2", {}, `오늘은 ${THEMES[rec].name}, ${THEMES[rec].title}을 추천해요`),
+    S.balanced
+      ? h("h2", {}, `두 테마가 모두 잘 맞아요. 이번에는 ${THEMES[rec].name}를 추천해요`)
+      : h("h2", {}, `오늘은 ${THEMES[rec].name}, ${THEMES[rec].title}${(THEMES[rec].title.charCodeAt(THEMES[rec].title.length - 1) - 0xAC00) % 28 ? "을" : "를"} 추천해요`),
     why.length ? h("div", { class: "note" }, h("p", {}, "이렇게 답하셨어요"), h("ul", { class: "reasons" }, why.map(w => h("li", {}, w)))) : null,
     h("div", { class: "choices" }, order.map(t => themeCard(t, t === rec))),
-    h("p", { class: "small muted" }, "추천과 다른 테마를 골라도 괜찮아요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요."),
+    h("p", { class: "small muted" }, "추천과 다른 테마를 골라도 괜찮아요. 첫 선택 강의 전까지 한 번 바꿀 수 있어요."),
     h("button", { class: "btn", disabled: !S.choice, onclick: async () => { S.createdAt = S.createdAt || new Date().toISOString(); go("done"); await save(); render(); } },
       S.choice ? `${THEMES[S.choice].name}로 확정하기` : "테마를 선택해 주세요"),
     h("button", { class: "linkbtn", onclick: () => go("safety") }, "이전"),
@@ -348,25 +358,25 @@ function renderResult() {
 
 function renderDone() {
   const T = THEMES[S.choice];
-  const other = S.choice === "R" ? "E" : "R";
+  const why = reasons(S.choice);
   return [
     header(),
     h("div", { class: "ticket" },
-      h("div", { class: "eyebrow" }, "파우치 수령 코드"),
-      h("div", { class: "code " + T.key }, codeOf()),
+      h("div", { class: "eyebrow" }, "나의 테마"),
+      h("div", { class: "code " + T.key, style: "font-size:44px" }, T.name),
       h("div", { class: "swatch", "aria-hidden": "true" }, T.colors.map(c => h("i", { style: `background:${c}` }))),
-      h("h2", {}, `${T.name} · ${T.title}`),
+      h("h2", {}, T.title),
+      h("p", { class: "small" }, T.line),
+      h("div", { class: "note", style: "text-align:left;width:100%" }, h("ul", {}, T.items.map(i => h("li", {}, i)))),
       h("dl", { class: "kv" },
         h("dt", {}, "이름"), h("dd", {}, S.name),
-        h("dt", {}, "파우치"), h("dd", {}, `${T.pouch} · ${pouchType()}`),
         intensityFlag() ? h("dt", {}, "강도") : null,
         intensityFlag() ? h("dd", { class: "flag" }, "진행자 강도 조절 확인") : null),
-      h("p", { class: "small muted" }, "파우치를 받을 때 이 화면을 보여 주세요.")),
-    h("p", { class: "status" }, S.saved === "server" ? "결과가 저장됐어요. 첫 테마 수업 전까지 한 번 바꿀 수 있어요."
-      : S.saved === "local" ? "저장하지 못했어요. 인터넷 연결 후 이 화면을 다시 열어 주세요." : "저장 중…"),
-    S.changed ? h("p", { class: "small muted", style: "text-align:center" }, "테마 변경을 이미 한 번 사용했어요.")
-      : h("button", { class: "btn ghost", onclick: async () => { S.choice = other; S.changed = 1; S.saved = null; render(); await save(); render(); } },
-          `${THEMES[other].name}로 바꾸기 (1회)`),
+      h("p", { class: "small muted" }, "선택 강의와 마이 픽 타임에서 이 테마를 체험해 보세요.")),
+    why.length ? h("div", { class: "note" }, h("p", {}, "이렇게 답하셨어요"), h("ul", { class: "reasons" }, why.map(w => h("li", {}, w)))) : null,
+    h("p", { class: "status" }, S.saved === "server" ? "결과가 저장됐어요."
+      : S.saved === "local" ? "저장하지 못했어요. 인터넷 연결 후 이 화면을 다시 열어 주세요."
+      : S.saved === "test" ? "점검 모드라 엑셀에 저장하지 않았어요." : "저장 중…"),
     resetBox(),
   ];
 }
@@ -390,7 +400,7 @@ function resetBox() {
 }
 
 function restart() {
-  Object.assign(S, { step: "intro", name: "", qi: 0, answers: {}, safety: [], safetyDone: false, rec: null, choice: null, changed: 0, saved: null, createdAt: null, restarted: true });
+  Object.assign(S, { step: "intro", name: "", qi: 0, answers: {}, safety: [], safetyDone: false, rec: null, choice: null, changed: 0, saved: null, createdAt: null, balanced: false, restarted: true });
   persistLocal(); render(); window.scrollTo(0, 0);
 }
 function go(step, qi) { S.step = step; if (qi != null) S.qi = qi; persistLocal(); render(); window.scrollTo(0, 0); }
@@ -471,7 +481,7 @@ function render() {
     : S.step === "result" ? renderResult()
     : S.step === "done" ? renderDone()
     : renderIntro();
-  app.replaceChildren(...parts.filter(Boolean));
+  app.replaceChildren(...parts.flat().filter(Boolean));
 }
 
 try {
